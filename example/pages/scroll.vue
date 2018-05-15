@@ -79,16 +79,18 @@
                   class="cube-pulldown-wrapper"
                   :style="props.pullDownStyle">
                 <div
-                    v-if="props.beforePullDown"
-                    class="before-trigger"
-                    :style="{paddingTop: props.bubbleY + 'px'}">
-                  <span :class="{rotate: props.bubbleY > 40}">↓</span>
+                  v-if="props.beforePullDown"
+                  class="before-trigger"
+                  :style="{paddingTop: props.bubbleY + 'px'}">
+                  <div class="arrow">
+                    <span :class="{rotate: props.bubbleY > pullDownRefreshThreshold - pullDownRefreshHeight}">↓</span>
+                  </div>
                 </div>
                 <div class="after-trigger" v-else>
                   <div v-if="props.isPullingDown" class="loading">
                     <cube-loading></cube-loading>
                   </div>
-                  <div v-else><span>Refresh success</span></div>
+                  <div v-else class="text"><span>Refresh success</span></div>
                 </div>
               </div>
             </template>
@@ -125,6 +127,9 @@
   import goodsData from 'example/data/goods-list.json'
 
   import { ease } from '../data/ease'
+
+  const CUSTOM_PULLDOWN_HEIGHT = 50
+  const DEFAULT_PULLDOWN_HEIGHT = 60
 
   const _data = [
     'I am line 1',
@@ -217,6 +222,9 @@
           scrollbar: this.scrollbarObj
         }
       },
+      pullDownRefreshHeight() {
+        return this.customPullDown ? CUSTOM_PULLDOWN_HEIGHT : DEFAULT_PULLDOWN_HEIGHT
+      },
       scrollbarObj: function () {
         return this.scrollbar ? {fade: this.scrollbarFade} : false
       },
@@ -224,7 +232,8 @@
         return this.pullDownRefresh ? {
           threshold: parseInt(this.pullDownRefreshThreshold),
           stop: parseInt(this.pullDownRefreshStop),
-          txt: this.pullDownRefreshTxt
+          txt: this.pullDownRefreshTxt,
+          height: this.pullDownRefreshHeight
         } : false
       },
       pullUpLoadObj: function () {
@@ -340,6 +349,8 @@
       .before-trigger
         font-size: 30px
         align-self: flex-end
+      .arrow
+        padding: 10px
         span
           display: inline-block
           transition: all 0.3s
