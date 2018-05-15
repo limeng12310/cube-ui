@@ -24,6 +24,11 @@ export default {
       }
     }
   },
+  data() {
+    return {
+      realData: this.data.slice()
+    }
+  },
   computed: {
     valueKey() {
       return this.alias.value || DEFAULT_KEYS.value
@@ -38,7 +43,13 @@ export default {
   watch: {
     // Merge the watch handlers of data and selectedIndex into one.
     merge(newVal) {
-      this.setData(newVal[0], newVal[1])
+      this.setData(newVal[0] !== this.oldData ? newVal[0] : this.realData, newVal[1])
+    },
+    data(newVal) {
+      this.oldData = newVal
+    },
+    selectedIndex(newVal) {
+      this.oldSelectedIndex = newVal
     }
   }
 }
